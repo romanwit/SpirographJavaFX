@@ -54,7 +54,14 @@ public class SpirographFX extends Application {
         Spinner<Double> spinnerO = createSpinner(10, 150, 50, 1);
 
         ColorPicker colorPicker = new ColorPicker(currentColor);
-        colorPicker.setOnAction(e -> currentColor = colorPicker.getValue());
+        colorPicker.setOnAction(e -> {
+            currentColor = colorPicker.getValue();
+            if (currentColor.equals(Color.web("#f2f2f2"))) {
+                System.out.println("Selected color matches #f2f2f2. Changing to a visible color.");
+                currentColor = Color.BLACK; 
+                colorPicker.setValue(currentColor); 
+            }
+        });
 
         Button drawButton = new Button("Draw Spirograph");
         drawButton.setOnAction(e -> {
@@ -66,7 +73,7 @@ public class SpirographFX extends Application {
 
         VBox controls = new VBox(10, spinnerR, spinnerr, spinnerO, colorPicker, drawButton);
         controls.setPadding(new Insets(10));
-        controls.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-width: 1px;");
+        controls.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc; -fx-border-width: 1px;");
 
         BorderPane root = new BorderPane();
         root.setCenter(canvas);
