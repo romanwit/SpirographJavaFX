@@ -4,10 +4,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -20,6 +20,7 @@ public class SpirographFX extends Application {
 
     private Canvas canvas;
     private final double canvasSize = 800;
+    private Color currentColor = Color.BLUE; 
 
     @Override
     public void start(Stage primaryStage) {
@@ -27,18 +28,16 @@ public class SpirographFX extends Application {
         Image icon = new Image(getClass().getResourceAsStream("/bulb32.png"));
         primaryStage.getIcons().add(icon);
 
-           if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             try {
                 if (Taskbar.isTaskbarSupported()) {
-                var taskbar = Taskbar.getTaskbar();
+                    var taskbar = Taskbar.getTaskbar();
 
                     if (taskbar.isSupported(Feature.ICON_IMAGE)) {
                         final Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
                         var dockIcon = defaultToolkit.getImage(getClass().getResource("/bulb128.png"));
                         taskbar.setIconImage(dockIcon);
-                        
                     }
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -50,9 +49,12 @@ public class SpirographFX extends Application {
         canvas = new Canvas(canvasSize, canvasSize);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        Spinner<Double> spinnerR = createSpinner(50, 300, 100, 1); 
-        Spinner<Double> spinnerr = createSpinner(10, 100, 30, 1);   
-        Spinner<Double> spinnerO = createSpinner(10, 150, 50, 1);   
+        Spinner<Double> spinnerR = createSpinner(50, 300, 100, 1);
+        Spinner<Double> spinnerr = createSpinner(10, 100, 30, 1);
+        Spinner<Double> spinnerO = createSpinner(10, 150, 50, 1);
+
+        ColorPicker colorPicker = new ColorPicker(currentColor);
+        colorPicker.setOnAction(e -> currentColor = colorPicker.getValue());
 
         Button drawButton = new Button("Draw Spirograph");
         drawButton.setOnAction(e -> {
@@ -62,7 +64,7 @@ public class SpirographFX extends Application {
             drawSpirograph(gc, canvasSize / 2, canvasSize / 2, R, r, O);
         });
 
-        VBox controls = new VBox(10, spinnerR, spinnerr, spinnerO, drawButton);
+        VBox controls = new VBox(10, spinnerR, spinnerr, spinnerO, colorPicker, drawButton);
         controls.setPadding(new Insets(10));
         controls.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-width: 1px;");
 
@@ -84,7 +86,7 @@ public class SpirographFX extends Application {
 
     private void drawSpirograph(GraphicsContext gc, double centerX, double centerY, double R, double r, double O) {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        gc.setStroke(Color.BLUE);
+        gc.setStroke(currentColor); 
         gc.setLineWidth(2);
 
         double t = 0;
